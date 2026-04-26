@@ -115,8 +115,26 @@ export class OrderService {
     if (error || !data) {
       throw { statusCode: 404, error: "Not Found", message: "Order not found" };
     }
+    const result = { ...data };
+    
+    // Separate fetch for profile to be absolutely sure
+    const { data: profileData } = await this.supabaseAdmin
+      .from("profiles")
+      .select("name")
+      .eq("id", data.user_id)
+      .single();
+    
+    result.profile = profileData;
+    result.customer_name = profileData?.name || 'Unknown';
+    
+    if (result.order_items) {
+      result.order_items = result.order_items.map((item: any) => ({
+        ...item,
+        products: Array.isArray(item.products) ? item.products[0] : item.products,
+      }));
+    }
 
-    return data;
+    return result;
   }
 
   /**
@@ -141,7 +159,16 @@ export class OrderService {
       throw { statusCode: 500, error: "Internal Server Error", message: error.message };
     }
 
-    return data;
+    // Flatten products in order items
+    const orders = (data ?? []).map((order: any) => ({
+      ...order,
+      order_items: order.order_items?.map((item: any) => ({
+        ...item,
+        products: Array.isArray(item.products) ? item.products[0] : item.products,
+      })),
+    }));
+
+    return orders;
   }
 
   /**
@@ -156,7 +183,6 @@ export class OrderService {
       .select(
         `
         *,
-        profiles(id, name, role),
         order_items(id)
       `,
         { count: "exact" }
@@ -174,25 +200,27 @@ export class OrderService {
       throw { statusCode: 500, error: "Internal Server Error", message: error.message };
     }
 
-    // Transform: add item_count, flatten user info
-    const orders = (data ?? []).map((order: any) => ({
-      id: order.id,
-      user_id: order.user_id,
-      status: order.status,
-      total_amount: order.total_amount,
-      created_at: order.created_at,
-      user: order.profiles,
-      item_count: order.order_items?.length ?? 0,
-    }));
+    const orders = [];
+    for (const order of (data ?? [])) {
+      const { data: profile } = await this.supabaseAdmin
+        .from("profiles")
+        .select("name")
+        .eq("id", order.user_id)
+        .single();
+      
+      orders.push({
+        ...order,
+        customer_name: profile?.name || "Unknown",
+        profile: profile,
+        item_count: order.order_items?.length ?? 0,
+      });
+    }
 
     return {
       orders,
-      pagination: {
-        page,
-        limit,
-        total: count ?? 0,
-        total_pages: Math.ceil((count ?? 0) / limit),
-      },
+      total: count ?? 0,
+      page,
+      limit,
     };
   }
 

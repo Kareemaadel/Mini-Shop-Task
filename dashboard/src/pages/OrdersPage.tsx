@@ -150,7 +150,7 @@ export default function OrdersPage() {
                     </td>
                     <td className="px-6 py-4">
                       <p className="font-medium text-text-main">
-                        {order.profile?.name || '—'}
+                        {order.customer_name || order.profile?.name || '—'}
                       </p>
                     </td>
                     <td className="px-6 py-4 text-text-muted">
@@ -242,7 +242,7 @@ export default function OrdersPage() {
               <div>
                 <p className="text-xs font-medium text-text-muted">Customer</p>
                 <p className="mt-1 text-sm text-text-main">
-                  {selectedOrder.profile?.name || 'Unknown'}
+                  {selectedOrder.customer_name || selectedOrder.profile?.name || 'Unknown'}
                 </p>
               </div>
               <div>
@@ -267,9 +267,9 @@ export default function OrdersPage() {
                   {selectedOrder.order_items.map((item) => (
                     <div key={item.id} className="flex items-center justify-between px-4 py-3">
                       <div className="flex items-center gap-3">
-                        {item.product?.image_url ? (
+                        {item.products?.image_url ? (
                           <img
-                            src={item.product.image_url}
+                            src={item.products.image_url}
                             alt=""
                             className="h-10 w-10 rounded-lg object-cover"
                           />
@@ -278,7 +278,7 @@ export default function OrdersPage() {
                         )}
                         <div>
                           <p className="text-sm font-medium text-text-main">
-                            {item.product?.name || 'Unknown product'}
+                            {item.products?.name || 'Unknown product'}
                           </p>
                           <p className="text-xs text-text-muted">Qty: {item.quantity}</p>
                         </div>

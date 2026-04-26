@@ -5,7 +5,7 @@ export interface OrderItem {
   product_id: string;
   quantity: number;
   unit_price: number;
-  product?: {
+  products?: {
     name: string;
     image_url: string | null;
   };
@@ -21,6 +21,7 @@ export interface Order {
   profile?: {
     name: string;
   };
+  customer_name?: string;
 }
 
 export interface OrdersResponse {

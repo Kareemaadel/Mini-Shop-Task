@@ -101,7 +101,7 @@ async function seed() {
       description:
         "Premium noise-canceling over-ear headphones with 30-hour battery life and deep bass.",
       price: 79.99,
-      image_url: "https://placehold.co/400x400/1a1a2e/e94560?text=Headphones",
+      image_url: "https://placehold.co/400x400/1a1a2e/e94560.png?text=Headphones",
       category_id: catMap.get("electronics"),
       is_active: true,
     },
@@ -110,7 +110,7 @@ async function seed() {
       description:
         "Fitness tracker with heart-rate monitor, GPS, and AMOLED display. Water-resistant to 50m.",
       price: 199.99,
-      image_url: "https://placehold.co/400x400/16213e/0f3460?text=SmartWatch",
+      image_url: "https://placehold.co/400x400/16213e/0f3460.png?text=SmartWatch",
       category_id: catMap.get("electronics"),
       is_active: true,
     },
@@ -119,7 +119,7 @@ async function seed() {
       description:
         "Fast-charging portable charger with USB-C and dual USB-A ports. Charges 3 devices simultaneously.",
       price: 34.99,
-      image_url: "https://placehold.co/400x400/1b262c/0f4c75?text=PowerBank",
+      image_url: "https://placehold.co/400x400/1b262c/0f4c75.png?text=PowerBank",
       category_id: catMap.get("electronics"),
       is_active: true,
     },
@@ -128,7 +128,7 @@ async function seed() {
       description:
         "RGB backlit mechanical keyboard with Cherry MX switches, programmable macros, and aluminum frame.",
       price: 129.99,
-      image_url: "https://placehold.co/400x400/2d4059/ea5455?text=Keyboard",
+      image_url: "https://placehold.co/400x400/2d4059/ea5455.png?text=Keyboard",
       category_id: catMap.get("electronics"),
       is_active: true,
     },
@@ -139,7 +139,7 @@ async function seed() {
       description:
         "Vintage-wash denim jacket with brass buttons. Comfortable fit with inner fleece lining.",
       price: 59.99,
-      image_url: "https://placehold.co/400x400/40514e/11999e?text=DenimJacket",
+      image_url: "https://placehold.co/400x400/40514e/11999e.png?text=DenimJacket",
       category_id: catMap.get("clothing"),
       is_active: true,
     },
@@ -148,7 +148,7 @@ async function seed() {
       description:
         "Sustainably sourced 100% organic cotton crew-neck tee. Available in multiple colors.",
       price: 24.99,
-      image_url: "https://placehold.co/400x400/30475e/f05454?text=T-Shirt",
+      image_url: "https://placehold.co/400x400/30475e/f05454.png?text=T-Shirt",
       category_id: catMap.get("clothing"),
       is_active: true,
     },
@@ -157,7 +157,7 @@ async function seed() {
       description:
         "Lightweight performance running shoes with responsive foam cushioning and breathable mesh upper.",
       price: 89.99,
-      image_url: "https://placehold.co/400x400/222831/00adb5?text=Sneakers",
+      image_url: "https://placehold.co/400x400/222831/00adb5.png?text=Sneakers",
       category_id: catMap.get("clothing"),
       is_active: true,
     },
@@ -166,7 +166,7 @@ async function seed() {
       description:
         "Merino wool blend beanie with ribbed knit texture. One size fits all.",
       price: 19.99,
-      image_url: "https://placehold.co/400x400/393e46/eeeeee?text=Beanie",
+      image_url: "https://placehold.co/400x400/393e46/eeeeee.png?text=Beanie",
       category_id: catMap.get("clothing"),
       is_active: true,
     },
@@ -177,7 +177,7 @@ async function seed() {
       description:
         "Assortment of 12 handcrafted dark chocolate truffles. 70% cacao from single-origin beans.",
       price: 29.99,
-      image_url: "https://placehold.co/400x400/3c1642/f55951?text=Chocolate",
+      image_url: "https://placehold.co/400x400/3c1642/f55951.png?text=Chocolate",
       category_id: catMap.get("food"),
       is_active: true,
     },
@@ -186,7 +186,7 @@ async function seed() {
       description:
         "Raw, unfiltered wildflower honey from local bee farms. No additives or preservatives.",
       price: 14.99,
-      image_url: "https://placehold.co/400x400/f5a623/ffffff?text=Honey",
+      image_url: "https://placehold.co/400x400/f5a623/ffffff.png?text=Honey",
       category_id: catMap.get("food"),
       is_active: true,
     },
@@ -195,7 +195,7 @@ async function seed() {
       description:
         "Ceremonial-grade matcha powder from Uji, Kyoto. Stone-ground for rich umami flavor.",
       price: 39.99,
-      image_url: "https://placehold.co/400x400/2e4600/a8df65?text=Matcha",
+      image_url: "https://placehold.co/400x400/2e4600/a8df65.png?text=Matcha",
       category_id: catMap.get("food"),
       is_active: true,
     },
@@ -204,7 +204,7 @@ async function seed() {
       description:
         "Roasted almonds, cashews, walnuts, and dried cranberries. High-protein, no added sugar.",
       price: 12.99,
-      image_url: "https://placehold.co/400x400/6b4226/d4a76a?text=TrailMix",
+      image_url: "https://placehold.co/400x400/6b4226/d4a76a.png?text=TrailMix",
       category_id: catMap.get("food"),
       is_active: true,
     },

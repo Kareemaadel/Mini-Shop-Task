@@ -64,6 +64,12 @@ export class AuthService {
       throw { statusCode: 401, error: "Unauthorized", message: "Invalid email or password" };
     }
 
+    const { data: profile } = await this.supabaseAdmin
+      .from("profiles")
+      .select("name, role")
+      .eq("id", data.user.id)
+      .single();
+
     return {
       access_token: data.session.access_token,
       refresh_token: data.session.refresh_token,
@@ -71,6 +77,8 @@ export class AuthService {
       user: {
         id: data.user.id,
         email: data.user.email,
+        name: profile?.name || 'Unknown',
+        role: profile?.role || 'customer',
       },
     };
   }
@@ -104,6 +112,15 @@ export class AuthService {
       throw { statusCode: 404, error: "Not Found", message: "Profile not found" };
     }
 
-    return data;
+    // Since profiles doesn't have email, we get it from the user account
+    const { data: userData } = await this.supabaseAdmin.auth.admin.getUserById(userId);
+
+    return {
+      id: data.id,
+      name: data.name,
+      role: data.role,
+      created_at: data.created_at,
+      email: userData.user?.email || '',
+    };
   }
 }

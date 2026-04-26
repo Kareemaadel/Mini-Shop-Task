@@ -106,6 +106,47 @@ export default async function orderRoutes(fastify: FastifyInstance) {
     }
   );
 
+  // ── GET /orders/:id (Authenticated customer) ────────────────────────
+  fastify.get(
+    "/:id",
+    { preHandler: [fastify.authenticate] },
+    async (request, reply) => {
+      const paramsParsed = orderParamsSchema.safeParse(request.params);
+      if (!paramsParsed.success) {
+        return reply
+          .status(400)
+          .send(
+            errorResponse(
+              400,
+              "Validation Error",
+              paramsParsed.error.errors[0].message
+            )
+          );
+      }
+
+      try {
+        const order = await orderService.getOrderById(paramsParsed.data.id);
+        
+        // Ensure the order belongs to the user or user is admin
+        if (order.user_id !== request.authUser!.id && request.authUser!.role !== 'admin') {
+          return reply.status(403).send(errorResponse(403, "Forbidden", "You do not have access to this order"));
+        }
+        
+        return reply.send(order);
+      } catch (err: any) {
+        return reply
+          .status(err.statusCode ?? 500)
+          .send(
+            errorResponse(
+              err.statusCode ?? 500,
+              err.error ?? "Internal Server Error",
+              err.message ?? "An unexpected error occurred"
+            )
+          );
+      }
+    }
+  );
+
   // ── PATCH /orders/:id/status (Admin) ──────────────────────────────
   fastify.patch(
     "/:id/status",

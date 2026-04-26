@@ -10,6 +10,7 @@ import {
   XMarkIcon,
 } from '@heroicons/react/24/outline';
 import { authService } from '../services/auth';
+import ThemeToggle from './ThemeToggle';
 
 const navItems = [
   { name: 'Dashboard', path: '/dashboard', icon: ChartBarIcon },
@@ -96,20 +97,23 @@ export default function AdminLayout() {
         <header className="flex h-16 items-center justify-between border-b border-surface-border bg-surface px-4 md:px-6">
           <button
             onClick={() => setSidebarOpen(true)}
-            className="rounded-lg p-2 text-slate-500 hover:bg-slate-100 md:hidden"
+            className="rounded-lg p-2 text-text-muted hover:bg-slate-100 md:hidden"
           >
             <Bars3Icon className="h-5 w-5" />
           </button>
           <div className="hidden md:block" />
-          <div className="flex items-center gap-3">
-            <div className="text-right">
-              <p className="text-sm font-semibold text-slate-800">
-                {user?.name || 'Admin'}
-              </p>
-              <p className="text-xs text-slate-500">{user?.email}</p>
-            </div>
-            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary-100 text-sm font-semibold text-primary-700">
-              {(user?.name || 'A').charAt(0).toUpperCase()}
+          <div className="flex items-center gap-4">
+            <ThemeToggle />
+            <div className="flex items-center gap-3 border-l border-surface-border pl-4">
+              <div className="text-right hidden sm:block">
+                <p className="text-sm font-semibold text-text-main">
+                  {user?.name || 'Admin'}
+                </p>
+                <p className="text-xs text-text-muted">{user?.email}</p>
+              </div>
+              <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary-100 dark:bg-primary-900 text-sm font-semibold text-primary-700 dark:text-primary-300 shadow-sm border border-primary-200 dark:border-primary-800">
+                {(user?.name || 'A').charAt(0).toUpperCase()}
+              </div>
             </div>
           </div>
         </header>

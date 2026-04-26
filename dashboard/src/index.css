@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme {
   --color-primary-50: #eff6ff;
   --color-primary-100: #dbeafe;
@@ -12,15 +14,18 @@
   --color-primary-800: #1e40af;
   --color-primary-900: #1e3a8a;
 
-  --color-sidebar: #0f172a;
-  --color-sidebar-hover: #1e293b;
-  --color-sidebar-active: #1e3a5f;
-  --color-sidebar-text: #94a3b8;
-  --color-sidebar-text-active: #ffffff;
+  --color-sidebar: var(--sidebar-bg);
+  --color-sidebar-hover: var(--sidebar-hover);
+  --color-sidebar-active: var(--sidebar-active);
+  --color-sidebar-text: var(--sidebar-text);
+  --color-sidebar-text-active: var(--sidebar-text-active);
 
-  --color-surface: #ffffff;
-  --color-surface-secondary: #f8fafc;
-  --color-surface-border: #e2e8f0;
+  --color-surface: var(--surface-bg);
+  --color-surface-secondary: var(--surface-secondary);
+  --color-surface-border: var(--surface-border);
+
+  --color-text-main: var(--text-main);
+  --color-text-muted: var(--text-muted);
 
   --color-success: #10b981;
   --color-warning: #f59e0b;
@@ -31,8 +36,40 @@
 }
 
 @layer base {
+  :root {
+    --sidebar-bg: #0f172a;
+    --sidebar-hover: #1e293b;
+    --sidebar-active: #1e3a5f;
+    --sidebar-text: #94a3b8;
+    --sidebar-text-active: #ffffff;
+    
+    --surface-bg: #ffffff;
+    --surface-secondary: #f8fafc;
+    --surface-border: #e2e8f0;
+
+    --text-main: #1e293b;
+    --text-muted: #64748b;
+  }
+
+  .dark {
+    --sidebar-bg: #0b0f19;
+    --sidebar-hover: #162032;
+    --sidebar-active: #1e3a5f;
+    --sidebar-text: #94a3b8;
+    --sidebar-text-active: #ffffff;
+
+    --surface-bg: #0f172a;
+    --surface-secondary: #020617;
+    --surface-border: #1e293b;
+
+    --text-main: #f8fafc;
+    --text-muted: #94a3b8;
+  }
+
   body {
-    @apply bg-surface-secondary text-slate-800 antialiased;
+    background-color: var(--color-surface-secondary);
+    color: var(--color-text-main);
     font-family: var(--font-sans);
+    transition: background-color 0.3s ease, color 0.3s ease;
   }
 }

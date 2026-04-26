@@ -10,7 +10,7 @@ export default function StatusBadge({ status }: { status: string }) {
   return (
     <span
       className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-semibold ring-1 ring-inset capitalize ${
-        statusStyles[status] || 'bg-slate-50 text-slate-700 ring-slate-600/20'
+        statusStyles[status] || 'bg-surface-secondary text-text-main ring-slate-600/20'
       }`}
     >
       {status}

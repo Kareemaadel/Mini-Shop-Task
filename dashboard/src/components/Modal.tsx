@@ -36,10 +36,10 @@ export default function Modal({ isOpen, onClose, title, children, size = 'lg' }:
         className={`relative w-full ${sizeMap[size]} max-h-[90vh] overflow-y-auto rounded-2xl bg-surface p-6 shadow-2xl`}
       >
         <div className="mb-6 flex items-center justify-between">
-          <h2 className="text-xl font-bold text-slate-900">{title}</h2>
+          <h2 className="text-xl font-bold text-text-main">{title}</h2>
           <button
             onClick={onClose}
-            className="rounded-lg p-1.5 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600"
+            className="rounded-lg p-1.5 text-slate-400 transition-colors hover:bg-slate-100 hover:text-text-muted"
           >
             <XMarkIcon className="h-5 w-5" />
           </button>

@@ -1,11 +1,16 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Alert, Switch } from 'react-native';
 import { Feather } from '@expo/vector-icons';
+
+import { LinearGradient } from 'expo-linear-gradient';
 import { useAuthStore } from '../../../src/store/useAuthStore';
-import { theme } from '../../../src/theme';
+import { useThemeStore } from '../../../src/store/useThemeStore';
+import { useAppTheme } from '../../../src/hooks/useAppTheme';
 
 export default function ProfileScreen() {
   const { user, logout } = useAuthStore();
+  const { themeMode, setThemeMode } = useThemeStore();
+  const theme = useAppTheme();
 
   const handleLogout = () => {
     Alert.alert(
@@ -24,38 +29,64 @@ export default function ProfileScreen() {
     );
   };
 
+  const toggleTheme = () => {
+    const nextMode = themeMode === 'light' ? 'dark' : themeMode === 'dark' ? 'system' : 'light';
+    setThemeMode(nextMode);
+  };
+
+  const getThemeIcon = () => {
+    if (themeMode === 'light') return 'sun';
+    if (themeMode === 'dark') return 'moon';
+    return 'smartphone';
+  };
+
   if (!user) return null;
 
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <View style={styles.avatarContainer}>
-          <Text style={styles.avatarText}>
+    <LinearGradient
+      colors={[theme.colors.background, theme.colors.card]}
+      style={styles.container}
+    >
+      <View style={[styles.header, { backgroundColor: theme.colors.card, borderBottomColor: theme.colors.border }]}>
+        <View style={[styles.avatarContainer, { backgroundColor: theme.colors.primaryLight }]}>
+          <Text style={[styles.avatarText, { color: theme.colors.white }]}>
             {user.name.charAt(0).toUpperCase()}
           </Text>
         </View>
-        <Text style={styles.name}>{user.name}</Text>
-        <Text style={styles.email}>{user.email}</Text>
+        <Text style={[styles.name, { color: theme.colors.text }]}>{user.name}</Text>
+        <Text style={[styles.email, { color: theme.colors.textSecondary }]}>{user.email}</Text>
         
-        <View style={styles.roleBadge}>
-          <Text style={styles.roleText}>{user.role.toUpperCase()}</Text>
+        <View style={[styles.roleBadge, { backgroundColor: theme.colors.background, borderColor: theme.colors.border }]}>
+          <Text style={[styles.roleText, { color: theme.colors.textSecondary }]}>{user.role.toUpperCase()}</Text>
         </View>
       </View>
 
-      <View style={styles.menuContainer}>
-        <TouchableOpacity style={styles.menuItem}>
+      <View style={[styles.menuContainer, { backgroundColor: theme.colors.card, borderColor: theme.colors.border }]}>
+        
+        {/* Theme Toggle */}
+        <TouchableOpacity style={[styles.menuItem, { borderBottomColor: theme.colors.border }]} onPress={toggleTheme}>
+          <View style={styles.menuIcon}>
+            <Feather name={getThemeIcon()} size={20} color={theme.colors.primary} />
+          </View>
+          <Text style={[styles.menuText, { color: theme.colors.text }]}>
+            Appearance: {themeMode.charAt(0).toUpperCase() + themeMode.slice(1)}
+          </Text>
+          <Feather name="refresh-ccw" size={16} color={theme.colors.textSecondary} />
+        </TouchableOpacity>
+
+        <TouchableOpacity style={[styles.menuItem, { borderBottomColor: theme.colors.border }]}>
           <View style={styles.menuIcon}>
             <Feather name="settings" size={20} color={theme.colors.textSecondary} />
           </View>
-          <Text style={styles.menuText}>Settings</Text>
+          <Text style={[styles.menuText, { color: theme.colors.text }]}>Settings</Text>
           <Feather name="chevron-right" size={20} color={theme.colors.border} />
         </TouchableOpacity>
         
-        <TouchableOpacity style={styles.menuItem}>
+        <TouchableOpacity style={[styles.menuItem, { borderBottomColor: theme.colors.border }]}>
           <View style={styles.menuIcon}>
             <Feather name="help-circle" size={20} color={theme.colors.textSecondary} />
           </View>
-          <Text style={styles.menuText}>Help & Support</Text>
+          <Text style={[styles.menuText, { color: theme.colors.text }]}>Help & Support</Text>
           <Feather name="chevron-right" size={20} color={theme.colors.border} />
         </TouchableOpacity>
 
@@ -63,76 +94,87 @@ export default function ProfileScreen() {
           style={[styles.menuItem, styles.logoutItem]} 
           onPress={handleLogout}
         >
-          <View style={[styles.menuIcon, styles.logoutIcon]}>
-            <Feather name="log-out" size={20} color={theme.colors.error} />
+          <View style={[styles.menuIcon, styles.logoutIcon, { backgroundColor: theme.colors.error + '15' }]}>
+            <Feather name="log-out" size={18} color={theme.colors.error} />
           </View>
-          <Text style={styles.logoutText}>Sign Out</Text>
+          <Text style={[styles.logoutText, { color: theme.colors.error }]}>Sign Out</Text>
         </TouchableOpacity>
       </View>
-    </View>
+    </LinearGradient>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.background,
   },
   header: {
     alignItems: 'center',
-    padding: theme.spacing.xl,
-    backgroundColor: theme.colors.white,
+    padding: 32,
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border,
+    borderBottomLeftRadius: 24,
+    borderBottomRightRadius: 24,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.05,
+    shadowRadius: 10,
+    elevation: 2,
   },
   avatarContainer: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    backgroundColor: theme.colors.primaryLight,
+    width: 90,
+    height: 90,
+    borderRadius: 45,
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: theme.spacing.md,
+    marginBottom: 16,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+    elevation: 4,
   },
   avatarText: {
-    ...theme.typography.h1,
-    color: theme.colors.white,
+    fontSize: 36,
+    fontWeight: '800',
   },
   name: {
-    ...theme.typography.h2,
-    marginBottom: theme.spacing.xs,
+    fontSize: 24,
+    fontWeight: '700',
+    marginBottom: 4,
+    letterSpacing: -0.5,
   },
   email: {
-    ...theme.typography.bodySecondary,
-    marginBottom: theme.spacing.sm,
+    fontSize: 16,
+    marginBottom: 12,
   },
   roleBadge: {
-    backgroundColor: theme.colors.background,
-    paddingHorizontal: theme.spacing.md,
-    paddingVertical: 4,
-    borderRadius: theme.borderRadius.full,
+    paddingHorizontal: 16,
+    paddingVertical: 6,
+    borderRadius: 9999,
     borderWidth: 1,
-    borderColor: theme.colors.border,
   },
   roleText: {
     fontSize: 12,
-    fontWeight: '600',
-    color: theme.colors.textSecondary,
+    fontWeight: '700',
     letterSpacing: 0.5,
   },
   menuContainer: {
-    marginTop: theme.spacing.xl,
-    backgroundColor: theme.colors.white,
-    borderTopWidth: 1,
-    borderBottomWidth: 1,
-    borderColor: theme.colors.border,
+    marginTop: 24,
+    marginHorizontal: 16,
+    borderRadius: 20,
+    borderWidth: 1,
+    overflow: 'hidden',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.05,
+    shadowRadius: 10,
+    elevation: 2,
   },
   menuItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: theme.spacing.md,
+    padding: 16,
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border,
   },
   menuIcon: {
     width: 40,
@@ -140,25 +182,23 @@ const styles = StyleSheet.create({
   },
   menuText: {
     flex: 1,
-    ...theme.typography.body,
+    fontSize: 16,
     fontWeight: '500',
   },
   logoutItem: {
     borderBottomWidth: 0,
   },
   logoutIcon: {
-    backgroundColor: '#FEF2F2',
     width: 32,
     height: 32,
     borderRadius: 16,
     justifyContent: 'center',
     alignItems: 'center',
-    marginRight: theme.spacing.sm,
+    marginRight: 8,
   },
   logoutText: {
     flex: 1,
-    ...theme.typography.body,
+    fontSize: 16,
     fontWeight: '600',
-    color: theme.colors.error,
   },
 });

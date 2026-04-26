@@ -48,7 +48,7 @@ export default function LoginPage() {
         </div>
 
         {/* Card */}
-        <div className="rounded-2xl border border-white/10 bg-white/5 p-8 shadow-xl backdrop-blur-lg">
+        <div className="rounded-2xl border border-white/10 bg-surface/5 p-8 shadow-xl backdrop-blur-lg">
           <form onSubmit={handleSubmit} className="space-y-5">
             <div>
               <label htmlFor="email" className="mb-1.5 block text-sm font-medium text-slate-300">
@@ -60,7 +60,7 @@ export default function LoginPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="w-full rounded-lg border border-white/10 bg-white/5 px-4 py-3 text-white placeholder-slate-500 outline-none transition-all focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20"
+                className="w-full rounded-lg border border-white/10 bg-surface/5 px-4 py-3 text-white placeholder-slate-500 outline-none transition-all focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20"
                 placeholder="admin@test.com"
               />
             </div>
@@ -75,7 +75,7 @@ export default function LoginPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                className="w-full rounded-lg border border-white/10 bg-white/5 px-4 py-3 text-white placeholder-slate-500 outline-none transition-all focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20"
+                className="w-full rounded-lg border border-white/10 bg-surface/5 px-4 py-3 text-white placeholder-slate-500 outline-none transition-all focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20"
                 placeholder="••••••••"
               />
             </div>
@@ -100,7 +100,7 @@ export default function LoginPage() {
           </form>
         </div>
 
-        <p className="mt-6 text-center text-xs text-slate-500">
+        <p className="mt-6 text-center text-xs text-text-muted">
           Admin access only. Contact support if you need access.
         </p>
       </div>

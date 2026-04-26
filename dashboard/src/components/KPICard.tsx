@@ -18,11 +18,11 @@ export default function KPICard({ title, value, icon, color, loading }: KPICardP
     <div className="rounded-xl border border-surface-border bg-surface p-6 transition-shadow hover:shadow-md">
       <div className="flex items-start justify-between">
         <div className="flex-1">
-          <p className="text-sm font-medium text-slate-500">{title}</p>
+          <p className="text-sm font-medium text-text-muted">{title}</p>
           {loading ? (
             <div className="mt-2 h-8 w-24 animate-pulse rounded-lg bg-slate-200" />
           ) : (
-            <p className="mt-2 text-3xl font-bold tracking-tight text-slate-900">{value}</p>
+            <p className="mt-2 text-3xl font-bold tracking-tight text-text-main">{value}</p>
           )}
         </div>
         <div className={`rounded-xl p-3 ${colorMap[color]}`}>

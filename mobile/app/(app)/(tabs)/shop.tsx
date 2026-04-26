@@ -1,13 +1,15 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { View, Text, StyleSheet, FlatList, TextInput, TouchableOpacity, Image, RefreshControl, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, FlatList, TextInput, TouchableOpacity, Image, RefreshControl, Dimensions, Pressable } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Feather } from '@expo/vector-icons';
+
+import { LinearGradient } from 'expo-linear-gradient';
 import { productsService, Product } from '../../../src/services/products';
 import { useDebounce } from '../../../src/hooks/useDebounce';
-import { theme } from '../../../src/theme';
+import { useAppTheme } from '../../../src/hooks/useAppTheme';
 
 const { width } = Dimensions.get('window');
-const CARD_WIDTH = (width - theme.spacing.md * 3) / 2;
+const CARD_WIDTH = (width - 48) / 2;
 
 const CATEGORIES = [
   { id: '', name: 'All' },
@@ -16,7 +18,36 @@ const CATEGORIES = [
   { id: 'food', name: 'Food' },
 ];
 
+
+
+const ProductCard = ({ item, index, onPress, theme }: { item: Product, index: number, onPress: () => void, theme: any }) => {
+  return (
+    <Pressable
+      onPress={onPress}
+      style={[
+        styles.card,
+        { backgroundColor: theme.colors.card }
+      ]}
+    >
+      <View style={[styles.imageContainer, { backgroundColor: theme.colors.background }]}>
+        {item.image_url ? (
+          <Image source={{ uri: item.image_url }} style={styles.image} resizeMode="cover" />
+        ) : (
+          <View style={[styles.image, styles.imagePlaceholder]}>
+            <Feather name="image" size={32} color={theme.colors.textSecondary} />
+          </View>
+        )}
+      </View>
+      <View style={styles.cardContent}>
+        <Text style={[styles.productName, { color: theme.colors.text }]} numberOfLines={2}>{item.name}</Text>
+        <Text style={[styles.productPrice, { color: theme.colors.primary }]}>${item.price.toFixed(2)}</Text>
+      </View>
+    </Pressable>
+  );
+};
+
 export default function ShopScreen() {
+  const theme = useAppTheme();
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -55,33 +86,11 @@ export default function ShopScreen() {
   };
 
   const renderSkeleton = () => (
-    <View style={styles.cardSkeleton}>
-      <View style={styles.imageSkeleton} />
-      <View style={styles.textSkeleton} />
-      <View style={[styles.textSkeleton, { width: '40%' }]} />
+    <View style={[styles.cardSkeleton, { backgroundColor: theme.colors.card }]}>
+      <View style={[styles.imageSkeleton, { backgroundColor: theme.colors.skeleton }]} />
+      <View style={[styles.textSkeleton, { backgroundColor: theme.colors.skeleton }]} />
+      <View style={[styles.textSkeleton, { width: '40%', backgroundColor: theme.colors.skeleton }]} />
     </View>
-  );
-
-  const renderProduct = ({ item }: { item: Product }) => (
-    <TouchableOpacity 
-      style={styles.card}
-      onPress={() => router.push(`/(app)/product/${item.id}`)}
-      activeOpacity={0.7}
-    >
-      <View style={styles.imageContainer}>
-        {item.image_url ? (
-          <Image source={{ uri: item.image_url }} style={styles.image} resizeMode="cover" />
-        ) : (
-          <View style={[styles.image, styles.imagePlaceholder]}>
-            <Feather name="image" size={32} color={theme.colors.textSecondary} />
-          </View>
-        )}
-      </View>
-      <View style={styles.cardContent}>
-        <Text style={styles.productName} numberOfLines={2}>{item.name}</Text>
-        <Text style={styles.productPrice}>${item.price.toFixed(2)}</Text>
-      </View>
-    </TouchableOpacity>
   );
 
   const renderEmptyState = () => {
@@ -90,10 +99,10 @@ export default function ShopScreen() {
     return (
       <View style={styles.emptyState}>
         <Feather name="search" size={64} color={theme.colors.textSecondary} />
-        <Text style={styles.emptyTitle}>No products found</Text>
-        <Text style={styles.emptySubtitle}>Try adjusting your search or filters</Text>
+        <Text style={[styles.emptyTitle, { color: theme.colors.text }]}>No products found</Text>
+        <Text style={[styles.emptySubtitle, { color: theme.colors.textSecondary }]}>Try adjusting your search or filters</Text>
         <TouchableOpacity 
-          style={styles.resetButton}
+          style={[styles.resetButton, { backgroundColor: theme.colors.primary }]}
           onPress={() => {
             setSearchQuery('');
             setSelectedCategory('');
@@ -107,11 +116,12 @@ export default function ShopScreen() {
 
   const renderHeader = () => (
     <View>
-      <View style={styles.header}>
-        <View style={styles.searchContainer}>
+      <View style={[styles.header, { backgroundColor: 'transparent' }]}>
+        <View style={[styles.searchContainer, { backgroundColor: theme.colors.card, shadowColor: theme.colors.primary, shadowOpacity: 0.1, shadowRadius: 10, shadowOffset: { width: 0, height: 4 }, elevation: 5 }]}>
           <Feather name="search" size={20} color={theme.colors.textSecondary} style={styles.searchIcon} />
           <TextInput
-            style={styles.searchInput}
+            style={[styles.searchInput, { color: theme.colors.text }]}
+            placeholderTextColor={theme.colors.textSecondary}
             placeholder="Search products..."
             value={searchQuery}
             onChangeText={setSearchQuery}
@@ -126,31 +136,37 @@ export default function ShopScreen() {
             data={CATEGORIES}
             keyExtractor={(item) => item.id}
             contentContainerStyle={styles.categoriesList}
-            renderItem={({ item }) => (
-              <TouchableOpacity
-                style={[
-                  styles.categoryPill,
-                  selectedCategory === item.id && styles.categoryPillActive
-                ]}
-                onPress={() => setSelectedCategory(item.id)}
-              >
-                <Text style={[
-                  styles.categoryText,
-                  selectedCategory === item.id && styles.categoryTextActive
-                ]}>
-                  {item.name}
-                </Text>
-              </TouchableOpacity>
-            )}
+            renderItem={({ item, index }) => {
+              const isActive = selectedCategory === item.id;
+              return (
+                <Pressable
+                  style={[
+                    styles.categoryPill,
+                    { 
+                      backgroundColor: isActive ? theme.colors.primary : theme.colors.card,
+                      borderColor: isActive ? theme.colors.primary : theme.colors.border
+                    }
+                  ]}
+                  onPress={() => setSelectedCategory(item.id)}
+                >
+                  <Text style={[
+                    styles.categoryText,
+                    { color: isActive ? theme.colors.white : theme.colors.textSecondary }
+                  ]}>
+                    {item.name}
+                  </Text>
+                </Pressable>
+              )
+            }}
           />
         </View>
       </View>
 
       {error ? (
-        <View style={styles.errorContainer}>
-          <Text style={styles.errorText}>{error}</Text>
-          <TouchableOpacity onPress={() => fetchProducts()} style={styles.retryButton}>
-            <Text style={styles.retryText}>Retry</Text>
+        <View style={[styles.errorContainer, { backgroundColor: theme.colors.error + '20' }]}>
+          <Text style={[styles.errorText, { color: theme.colors.error }]}>{error}</Text>
+          <TouchableOpacity onPress={() => fetchProducts()}>
+            <Text style={[styles.retryText, { color: theme.colors.error }]}>Retry</Text>
           </TouchableOpacity>
         </View>
       ) : null}
@@ -158,18 +174,28 @@ export default function ShopScreen() {
   );
 
   return (
-    <View style={styles.container}>
+    <LinearGradient
+      colors={[theme.colors.background, theme.colors.card]}
+      style={styles.container}
+    >
       <FlatList
         style={styles.list}
         data={loading ? [] : products}
         keyExtractor={(item) => item.id}
-        renderItem={renderProduct}
+        renderItem={({ item, index }) => (
+          <ProductCard 
+            item={item} 
+            index={index} 
+            theme={theme}
+            onPress={() => router.push(`/(app)/product/${item.id}`)} 
+          />
+        )}
         numColumns={2}
         ListHeaderComponent={renderHeader}
         contentContainerStyle={styles.productList}
         columnWrapperStyle={styles.columnWrapper}
         refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[theme.colors.primary]} />
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={theme.colors.primary} />
         }
         ListEmptyComponent={loading ? (
           <View style={styles.skeletonContainer}>
@@ -181,88 +207,76 @@ export default function ShopScreen() {
           </View>
         ) : renderEmptyState()}
       />
-    </View>
+    </LinearGradient>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.background,
   },
   header: {
-    backgroundColor: theme.colors.background,
-    paddingTop: theme.spacing.md,
-    marginBottom: theme.spacing.md,
+    paddingTop: 16,
+    marginBottom: 16,
   },
   searchContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: theme.colors.background,
-    marginHorizontal: theme.spacing.md,
-    borderRadius: theme.borderRadius.md,
-    paddingHorizontal: theme.spacing.md,
-    height: 44,
+    marginHorizontal: 16,
+    borderRadius: 16,
+    paddingHorizontal: 16,
+    height: 50,
   },
   searchIcon: {
-    marginRight: theme.spacing.sm,
+    marginRight: 8,
   },
   searchInput: {
     flex: 1,
     height: '100%',
     fontSize: 16,
-    color: theme.colors.text,
   },
   categoriesContainer: {
-    marginTop: theme.spacing.md,
-    marginBottom: theme.spacing.sm,
+    marginTop: 20,
+    marginBottom: 8,
   },
   categoriesList: {
-    paddingHorizontal: theme.spacing.md,
-    gap: theme.spacing.sm,
+    paddingHorizontal: 16,
+    gap: 12,
   },
   categoryPill: {
-    paddingHorizontal: theme.spacing.md,
-    paddingVertical: theme.spacing.sm,
-    borderRadius: theme.borderRadius.full,
-    backgroundColor: theme.colors.background,
+    paddingHorizontal: 18,
+    paddingVertical: 10,
+    borderRadius: 9999,
     borderWidth: 1,
-    borderColor: theme.colors.border,
-  },
-  categoryPillActive: {
-    backgroundColor: theme.colors.primary,
-    borderColor: theme.colors.primary,
   },
   categoryText: {
     fontSize: 14,
-    fontWeight: '500',
-    color: theme.colors.textSecondary,
-  },
-  categoryTextActive: {
-    color: theme.colors.white,
+    fontWeight: '600',
   },
   list: {
     flex: 1,
   },
   productList: {
-    padding: theme.spacing.md,
-    paddingBottom: theme.spacing.xxl,
+    padding: 16,
+    paddingBottom: 48,
   },
   columnWrapper: {
     justifyContent: 'space-between',
-    marginBottom: theme.spacing.md,
+    marginBottom: 16,
   },
   card: {
     width: CARD_WIDTH,
-    backgroundColor: theme.colors.white,
-    borderRadius: theme.borderRadius.lg,
+    borderRadius: 20,
     overflow: 'hidden',
-    ...theme.shadows.sm,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.1,
+    shadowRadius: 12,
+    elevation: 5,
   },
   imageContainer: {
     width: '100%',
     aspectRatio: 1,
-    backgroundColor: theme.colors.background,
   },
   image: {
     width: '100%',
@@ -273,82 +287,76 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   cardContent: {
-    padding: theme.spacing.sm,
+    padding: 12,
   },
   productName: {
-    ...theme.typography.body,
-    fontWeight: '500',
-    marginBottom: theme.spacing.xs,
-    height: 40, // fix height for 2 lines
+    fontSize: 14,
+    fontWeight: '600',
+    marginBottom: 4,
+    height: 40, 
   },
   productPrice: {
-    ...theme.typography.h3,
-    color: theme.colors.primary,
+    fontSize: 18,
+    fontWeight: '700',
   },
   skeletonContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'space-between',
-    gap: theme.spacing.md,
+    gap: 16,
   },
   cardSkeleton: {
     width: CARD_WIDTH,
-    backgroundColor: theme.colors.white,
-    borderRadius: theme.borderRadius.lg,
-    padding: theme.spacing.sm,
-    gap: theme.spacing.sm,
+    borderRadius: 20,
+    padding: 12,
+    gap: 8,
   },
   imageSkeleton: {
     width: '100%',
     aspectRatio: 1,
-    backgroundColor: theme.colors.skeleton,
-    borderRadius: theme.borderRadius.sm,
+    borderRadius: 12,
   },
   textSkeleton: {
     height: 16,
-    backgroundColor: theme.colors.skeleton,
-    borderRadius: theme.borderRadius.sm,
+    borderRadius: 8,
   },
   emptyState: {
     alignItems: 'center',
     justifyContent: 'center',
-    paddingTop: theme.spacing.xxl * 2,
+    paddingTop: 64,
   },
   emptyTitle: {
-    ...theme.typography.h2,
-    marginTop: theme.spacing.lg,
+    fontSize: 24,
+    fontWeight: '700',
+    marginTop: 24,
   },
   emptySubtitle: {
-    ...theme.typography.bodySecondary,
-    marginTop: theme.spacing.xs,
+    fontSize: 14,
+    marginTop: 8,
   },
   resetButton: {
-    marginTop: theme.spacing.lg,
-    paddingVertical: theme.spacing.sm,
-    paddingHorizontal: theme.spacing.lg,
-    backgroundColor: theme.colors.primaryLight,
-    borderRadius: theme.borderRadius.full,
+    marginTop: 24,
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    borderRadius: 9999,
   },
   resetButtonText: {
-    color: theme.colors.white,
+    color: '#FFF',
     fontWeight: '600',
   },
   errorContainer: {
-    padding: theme.spacing.md,
-    backgroundColor: '#FEF2F2',
+    padding: 16,
+    marginHorizontal: 16,
+    borderRadius: 12,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
   },
   errorText: {
-    color: theme.colors.error,
     flex: 1,
-  },
-  retryButton: {
-    padding: theme.spacing.sm,
+    fontWeight: '500',
   },
   retryText: {
-    color: theme.colors.primary,
-    fontWeight: '600',
+    fontWeight: '700',
   },
 });

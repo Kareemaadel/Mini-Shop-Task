@@ -165,8 +165,8 @@ export default function ProductsPage() {
       {/* Header */}
       <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">Products</h1>
-          <p className="mt-1 text-sm text-slate-500">Manage your product catalog</p>
+          <h1 className="text-2xl font-bold text-text-main">Products</h1>
+          <p className="mt-1 text-sm text-text-muted">Manage your product catalog</p>
         </div>
         <button
           onClick={openCreateModal}
@@ -200,18 +200,18 @@ export default function ProductsPage() {
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">
               <thead>
-                <tr className="border-b border-surface-border bg-slate-50">
-                  <th className="px-6 py-3.5 font-semibold text-slate-600">Image</th>
-                  <th className="px-6 py-3.5 font-semibold text-slate-600">Name</th>
-                  <th className="px-6 py-3.5 font-semibold text-slate-600">Category</th>
-                  <th className="px-6 py-3.5 font-semibold text-slate-600">Price</th>
-                  <th className="px-6 py-3.5 font-semibold text-slate-600">Status</th>
-                  <th className="px-6 py-3.5 font-semibold text-slate-600">Actions</th>
+                <tr className="border-b border-surface-border bg-surface-secondary">
+                  <th className="px-6 py-3.5 font-semibold text-text-muted">Image</th>
+                  <th className="px-6 py-3.5 font-semibold text-text-muted">Name</th>
+                  <th className="px-6 py-3.5 font-semibold text-text-muted">Category</th>
+                  <th className="px-6 py-3.5 font-semibold text-text-muted">Price</th>
+                  <th className="px-6 py-3.5 font-semibold text-text-muted">Status</th>
+                  <th className="px-6 py-3.5 font-semibold text-text-muted">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-surface-border">
                 {products.map((product) => (
-                  <tr key={product.id} className="transition-colors hover:bg-slate-50">
+                  <tr key={product.id} className="transition-colors hover:bg-surface-secondary">
                     <td className="px-6 py-4">
                       {product.image_url ? (
                         <img
@@ -226,13 +226,13 @@ export default function ProductsPage() {
                       )}
                     </td>
                     <td className="px-6 py-4">
-                      <p className="font-medium text-slate-900">{product.name}</p>
-                      <p className="mt-0.5 max-w-xs truncate text-xs text-slate-500">
+                      <p className="font-medium text-text-main">{product.name}</p>
+                      <p className="mt-0.5 max-w-xs truncate text-xs text-text-muted">
                         {product.description}
                       </p>
                     </td>
-                    <td className="px-6 py-4 text-slate-600">{getCategoryName(product)}</td>
-                    <td className="px-6 py-4 font-medium text-slate-900">
+                    <td className="px-6 py-4 text-text-muted">{getCategoryName(product)}</td>
+                    <td className="px-6 py-4 font-medium text-text-main">
                       ${product.price.toFixed(2)}
                     </td>
                     <td className="px-6 py-4">
@@ -243,7 +243,7 @@ export default function ProductsPage() {
                         }`}
                       >
                         <span
-                          className={`pointer-events-none inline-block h-5 w-5 rounded-full bg-white shadow-sm ring-0 transition-transform duration-200 ease-in-out ${
+                          className={`pointer-events-none inline-block h-5 w-5 rounded-full bg-surface shadow-sm ring-0 transition-transform duration-200 ease-in-out ${
                             product.is_active ? 'translate-x-5' : 'translate-x-0'
                           }`}
                         />
@@ -283,7 +283,7 @@ export default function ProductsPage() {
       >
         <form onSubmit={handleSubmit} className="space-y-5">
           <div>
-            <label className="mb-1.5 block text-sm font-medium text-slate-700">Name</label>
+            <label className="mb-1.5 block text-sm font-medium text-text-main">Name</label>
             <input
               type="text"
               value={formName}
@@ -295,7 +295,7 @@ export default function ProductsPage() {
           </div>
 
           <div>
-            <label className="mb-1.5 block text-sm font-medium text-slate-700">Description</label>
+            <label className="mb-1.5 block text-sm font-medium text-text-main">Description</label>
             <textarea
               value={formDescription}
               onChange={(e) => setFormDescription(e.target.value)}
@@ -308,7 +308,7 @@ export default function ProductsPage() {
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="mb-1.5 block text-sm font-medium text-slate-700">Price ($)</label>
+              <label className="mb-1.5 block text-sm font-medium text-text-main">Price ($)</label>
               <input
                 type="number"
                 step="0.01"
@@ -321,7 +321,7 @@ export default function ProductsPage() {
               />
             </div>
             <div>
-              <label className="mb-1.5 block text-sm font-medium text-slate-700">Category</label>
+              <label className="mb-1.5 block text-sm font-medium text-text-main">Category</label>
               <select
                 value={formCategory}
                 onChange={(e) => setFormCategory(e.target.value)}
@@ -338,7 +338,7 @@ export default function ProductsPage() {
           </div>
 
           <div>
-            <label className="mb-1.5 block text-sm font-medium text-slate-700">Image</label>
+            <label className="mb-1.5 block text-sm font-medium text-text-main">Image</label>
             <div className="flex items-center gap-4">
               {formImagePreview && (
                 <img
@@ -347,7 +347,7 @@ export default function ProductsPage() {
                   className="h-20 w-20 rounded-lg object-cover border border-surface-border"
                 />
               )}
-              <label className="flex cursor-pointer items-center gap-2 rounded-lg border border-dashed border-slate-300 px-4 py-3 text-sm text-slate-500 transition-colors hover:border-primary-400 hover:text-primary-600">
+              <label className="flex cursor-pointer items-center gap-2 rounded-lg border border-dashed border-slate-300 px-4 py-3 text-sm text-text-muted transition-colors hover:border-primary-400 hover:text-primary-600">
                 <PhotoIcon className="h-5 w-5" />
                 {formImage ? formImage.name : 'Choose file'}
                 <input
@@ -364,7 +364,7 @@ export default function ProductsPage() {
             <button
               type="button"
               onClick={() => setModalOpen(false)}
-              className="flex-1 rounded-lg border border-surface-border px-4 py-2.5 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50"
+              className="flex-1 rounded-lg border border-surface-border px-4 py-2.5 text-sm font-medium text-text-main transition-colors hover:bg-surface-secondary"
             >
               Cancel
             </button>

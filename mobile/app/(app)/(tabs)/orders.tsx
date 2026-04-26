@@ -1,9 +1,13 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, ActivityIndicator, RefreshControl } from 'react-native';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, ActivityIndicator, RefreshControl, Pressable } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Feather } from '@expo/vector-icons';
+
+import { LinearGradient } from 'expo-linear-gradient';
 import { ordersService, Order } from '../../../src/services/orders';
-import { theme } from '../../../src/theme';
+import { useAppTheme } from '../../../src/hooks/useAppTheme';
+
+
 
 export default function OrdersScreen() {
   const [orders, setOrders] = useState<Order[]>([]);
@@ -11,6 +15,7 @@ export default function OrdersScreen() {
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState('');
   const router = useRouter();
+  const theme = useAppTheme();
 
   const fetchOrders = useCallback(async (isRefresh = false) => {
     if (!isRefresh) setLoading(true);
@@ -47,50 +52,49 @@ export default function OrdersScreen() {
     }
   };
 
-  const renderItem = ({ item }: { item: Order }) => (
-    <TouchableOpacity 
-      style={styles.orderCard}
+  const renderItem = ({ item, index }: { item: Order, index: number }) => (
+    <Pressable 
+      style={[styles.orderCard, { backgroundColor: theme.colors.card }]}
       onPress={() => router.push(`/(app)/order/${item.id}`)}
-      activeOpacity={0.7}
     >
       <View style={styles.orderHeader}>
-        <Text style={styles.orderId}>Order #{item.id.substring(0, 8).toUpperCase()}</Text>
-        <View style={[styles.statusBadge, { backgroundColor: getStatusColor(item.status) }]}>
-          <Text style={styles.statusText}>{item.status.toUpperCase()}</Text>
+        <Text style={[styles.orderId, { color: theme.colors.text }]}>Order #{item.id.substring(0, 8).toUpperCase()}</Text>
+        <View style={[styles.statusBadge, { backgroundColor: getStatusColor(item.status) + '20' }]}>
+          <Text style={[styles.statusText, { color: getStatusColor(item.status) }]}>{item.status.toUpperCase()}</Text>
         </View>
       </View>
       
-      <View style={styles.orderContent}>
+      <View style={[styles.orderContent, { backgroundColor: theme.colors.background }]}>
         <View style={styles.orderRow}>
-          <Text style={styles.orderLabel}>Date</Text>
-          <Text style={styles.orderValue}>{new Date(item.created_at).toLocaleDateString()}</Text>
+          <Text style={[styles.orderLabel, { color: theme.colors.textSecondary }]}>Date</Text>
+          <Text style={[styles.orderValue, { color: theme.colors.text }]}>{new Date(item.created_at).toLocaleDateString()}</Text>
         </View>
         <View style={styles.orderRow}>
-          <Text style={styles.orderLabel}>Items</Text>
-          <Text style={styles.orderValue}>{item.order_items?.length || 0} items</Text>
+          <Text style={[styles.orderLabel, { color: theme.colors.textSecondary }]}>Items</Text>
+          <Text style={[styles.orderValue, { color: theme.colors.text }]}>{item.order_items?.length || 0} items</Text>
         </View>
         <View style={styles.orderRow}>
-          <Text style={styles.orderLabel}>Total</Text>
-          <Text style={[styles.orderValue, styles.orderTotal]}>${item.total_amount.toFixed(2)}</Text>
+          <Text style={[styles.orderLabel, { color: theme.colors.textSecondary }]}>Total</Text>
+          <Text style={[styles.orderValue, styles.orderTotal, { color: theme.colors.primary }]}>${item.total_amount.toFixed(2)}</Text>
         </View>
       </View>
       
       <View style={styles.orderFooter}>
-        <Text style={styles.viewDetailsText}>View Details</Text>
-        <Feather name="chevron-right" size={20} color={theme.colors.primary} />
+        <Text style={[styles.viewDetailsText, { color: theme.colors.primary }]}>View Details</Text>
+        <Feather name="chevron-right" size={18} color={theme.colors.primary} />
       </View>
-    </TouchableOpacity>
+    </Pressable>
   );
 
   const renderEmptyState = () => (
     <View style={styles.emptyState}>
-      <View style={styles.emptyIconContainer}>
-        <Feather name="package" size={64} color={theme.colors.primaryLight} />
+      <View style={[styles.emptyIconContainer, { backgroundColor: theme.colors.card }]}>
+        <Feather name="package" size={64} color={theme.colors.primary} />
       </View>
-      <Text style={styles.emptyTitle}>No orders yet</Text>
-      <Text style={styles.emptySubtitle}>When you place an order, it will appear here.</Text>
+      <Text style={[styles.emptyTitle, { color: theme.colors.text }]}>No orders yet</Text>
+      <Text style={[styles.emptySubtitle, { color: theme.colors.textSecondary }]}>When you place an order, it will appear here.</Text>
       <TouchableOpacity 
-        style={styles.shopButton}
+        style={[styles.shopButton, { backgroundColor: theme.colors.primary }]}
         onPress={() => router.push('/(app)/(tabs)/shop')}
       >
         <Text style={styles.shopButtonText}>Start Shopping</Text>
@@ -99,12 +103,12 @@ export default function OrdersScreen() {
   );
 
   return (
-    <View style={styles.container}>
+    <LinearGradient colors={[theme.colors.background, theme.colors.card]} style={styles.container}>
       {error && !loading && !refreshing ? (
-        <View style={styles.errorContainer}>
-          <Text style={styles.errorText}>{error}</Text>
-          <TouchableOpacity onPress={() => fetchOrders()} style={styles.retryButton}>
-            <Text style={styles.retryText}>Retry</Text>
+        <View style={[styles.errorContainer, { backgroundColor: theme.colors.error + '20', borderColor: theme.colors.error }]}>
+          <Text style={[styles.errorText, { color: theme.colors.error }]}>{error}</Text>
+          <TouchableOpacity onPress={() => fetchOrders()}>
+            <Text style={[styles.retryText, { color: theme.colors.error }]}>Retry</Text>
           </TouchableOpacity>
         </View>
       ) : null}
@@ -116,7 +120,7 @@ export default function OrdersScreen() {
         contentContainerStyle={styles.listContent}
         ItemSeparatorComponent={() => <View style={styles.separator} />}
         refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[theme.colors.primary]} />
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={theme.colors.primary} />
         }
         ListEmptyComponent={loading ? (
           <View style={styles.loadingContainer}>
@@ -124,144 +128,141 @@ export default function OrdersScreen() {
           </View>
         ) : renderEmptyState()}
       />
-    </View>
+    </LinearGradient>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.background,
   },
   loadingContainer: {
-    padding: theme.spacing.xl,
+    padding: 32,
     justifyContent: 'center',
     alignItems: 'center',
   },
   listContent: {
-    padding: theme.spacing.md,
+    padding: 16,
     flexGrow: 1,
   },
   separator: {
-    height: theme.spacing.md,
+    height: 16,
   },
   orderCard: {
-    backgroundColor: theme.colors.white,
-    borderRadius: theme.borderRadius.lg,
-    padding: theme.spacing.md,
-    ...theme.shadows.sm,
+    borderRadius: 20,
+    padding: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.05,
+    shadowRadius: 12,
+    elevation: 4,
   },
   orderHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: theme.spacing.md,
+    marginBottom: 16,
   },
   orderId: {
-    ...theme.typography.h3,
+    fontSize: 18,
+    fontWeight: '700',
+    letterSpacing: -0.5,
   },
   statusBadge: {
-    paddingHorizontal: theme.spacing.sm,
-    paddingVertical: 4,
-    borderRadius: theme.borderRadius.sm,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 8,
   },
   statusText: {
-    color: theme.colors.white,
     fontSize: 10,
-    fontWeight: '700',
+    fontWeight: '800',
     letterSpacing: 0.5,
   },
   orderContent: {
-    backgroundColor: theme.colors.background,
-    borderRadius: theme.borderRadius.md,
-    padding: theme.spacing.sm,
-    gap: theme.spacing.xs,
+    borderRadius: 12,
+    padding: 16,
+    gap: 8,
   },
   orderRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
   orderLabel: {
-    ...theme.typography.bodySecondary,
+    fontSize: 14,
   },
   orderValue: {
-    ...theme.typography.body,
+    fontSize: 14,
     fontWeight: '500',
   },
   orderTotal: {
-    color: theme.colors.primary,
-    fontWeight: '700',
+    fontWeight: '800',
   },
   orderFooter: {
     flexDirection: 'row',
     justifyContent: 'flex-end',
     alignItems: 'center',
-    marginTop: theme.spacing.md,
-    gap: theme.spacing.xs,
+    marginTop: 16,
+    gap: 4,
   },
   viewDetailsText: {
-    color: theme.colors.primary,
     fontSize: 14,
-    fontWeight: '600',
+    fontWeight: '700',
   },
   emptyState: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: theme.spacing.xl,
-    paddingTop: theme.spacing.xxl * 2,
+    padding: 32,
+    paddingTop: 96,
   },
   emptyIconContainer: {
-    width: 120,
-    height: 120,
-    borderRadius: 60,
-    backgroundColor: theme.colors.white,
+    width: 140,
+    height: 140,
+    borderRadius: 70,
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: theme.spacing.xl,
-    ...theme.shadows.sm,
+    marginBottom: 32,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.1,
+    shadowRadius: 16,
+    elevation: 5,
   },
   emptyTitle: {
-    ...theme.typography.h2,
-    marginBottom: theme.spacing.sm,
+    fontSize: 24,
+    fontWeight: '800',
+    marginBottom: 8,
   },
   emptySubtitle: {
-    ...theme.typography.bodySecondary,
+    fontSize: 16,
     textAlign: 'center',
-    marginBottom: theme.spacing.xl,
-    lineHeight: 22,
+    marginBottom: 32,
+    lineHeight: 24,
   },
   shopButton: {
-    backgroundColor: theme.colors.primary,
-    paddingHorizontal: theme.spacing.xl,
-    paddingVertical: theme.spacing.md,
-    borderRadius: theme.borderRadius.full,
+    paddingHorizontal: 32,
+    paddingVertical: 16,
+    borderRadius: 9999,
   },
   shopButtonText: {
-    color: theme.colors.white,
-    fontSize: 16,
-    fontWeight: '600',
+    color: '#FFF',
+    fontSize: 18,
+    fontWeight: '700',
   },
   errorContainer: {
-    padding: theme.spacing.md,
-    backgroundColor: '#FEF2F2',
+    padding: 16,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    margin: theme.spacing.md,
-    borderRadius: theme.borderRadius.md,
+    margin: 16,
+    borderRadius: 12,
     borderWidth: 1,
-    borderColor: '#FCA5A5',
   },
   errorText: {
-    color: theme.colors.error,
     flex: 1,
-  },
-  retryButton: {
-    padding: theme.spacing.sm,
+    fontWeight: '600',
   },
   retryText: {
-    color: theme.colors.primary,
-    fontWeight: '600',
+    fontWeight: '800',
   },
 });

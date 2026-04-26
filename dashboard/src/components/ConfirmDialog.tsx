@@ -28,13 +28,13 @@ export default function ConfirmDialog({
             <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" />
           </svg>
         </div>
-        <h3 className="text-lg font-semibold text-slate-900">{title}</h3>
-        <p className="mt-2 text-sm text-slate-500">{message}</p>
+        <h3 className="text-lg font-semibold text-text-main">{title}</h3>
+        <p className="mt-2 text-sm text-text-muted">{message}</p>
         <div className="mt-6 flex gap-3">
           <button
             onClick={onClose}
             disabled={loading}
-            className="flex-1 rounded-lg border border-surface-border px-4 py-2.5 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 disabled:opacity-50"
+            className="flex-1 rounded-lg border border-surface-border px-4 py-2.5 text-sm font-medium text-text-main transition-colors hover:bg-surface-secondary disabled:opacity-50"
           >
             Cancel
           </button>

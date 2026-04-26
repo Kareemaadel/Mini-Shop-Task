@@ -1,9 +1,10 @@
 import { Tabs } from 'expo-router';
 import { Feather } from '@expo/vector-icons';
-import { theme } from '../../../src/theme';
 import { useCartStore } from '../../../src/store/useCartStore';
+import { useAppTheme } from '../../../src/hooks/useAppTheme';
 
 export default function TabsLayout() {
+  const theme = useAppTheme();
   const items = useCartStore((state) => state.items);
   const cartItemCount = items.reduce((total, item) => total + item.quantity, 0);
 
@@ -12,7 +13,7 @@ export default function TabsLayout() {
       screenOptions={{
         headerShown: true,
         headerStyle: {
-          backgroundColor: theme.colors.white,
+          backgroundColor: theme.colors.card,
           elevation: 0,
           shadowOpacity: 0,
           borderBottomWidth: 1,
@@ -22,7 +23,7 @@ export default function TabsLayout() {
           ...theme.typography.h3,
         },
         tabBarStyle: {
-          backgroundColor: theme.colors.white,
+          backgroundColor: theme.colors.card,
           borderTopWidth: 1,
           borderTopColor: theme.colors.border,
           height: 60,

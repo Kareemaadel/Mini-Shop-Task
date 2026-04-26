@@ -182,18 +182,18 @@ export class ProductService {
   }
 
   /**
-   * Soft-delete: set is_active = false.
+   * Hard-delete a product.
    */
   async deleteProduct(id: string) {
     const { data, error } = await this.supabaseAdmin
       .from("products")
-      .update({ is_active: false })
+      .delete()
       .eq("id", id)
       .select("id, name, is_active")
       .single();
 
     if (error || !data) {
-      throw { statusCode: 404, error: "Not Found", message: "Product not found" };
+      throw { statusCode: 404, error: "Not Found", message: "Product not found or could not be deleted" };
     }
 
     return data;
